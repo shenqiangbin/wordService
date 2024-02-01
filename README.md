@@ -9,4 +9,4 @@ word 转图片分两步：
 	
 2、图片文件下载
 	curl http://localhost:9998/file/get?filename=46f33d0eb2f740a79f7db65a2c07004d.png
-![image](https://github.com/shenqiangbin/wordService/assets/23185639/3d55d7bc-79a4-458f-b7db-f7aa2e04956a)
+
