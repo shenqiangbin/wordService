@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<!-- 文件输出格式 -->
+	<property name="PATTERN"
+		value="%-12(%d{yyyy-MM-dd HH:mm:ss.SSS}) |-%-5level [%thread] %c [%M] [%L] -| %msg%n" />
+	<property name="HPATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%cyan(%thread)] [%highlight(%-5level)] [%green(%-37.37logger{36})].[%M][%L]: %msg%n " />
+
+	<property name="simplePattern" value="[%thread] %msg %n"></property>
+	<!-- test文件路径 -->
+	<property name="TEST_FILE_PATH" value="d:/test.log" />
+	<!-- pro文件路径 -->
+	<property name="PRO_FILE_PATH" value="./log.txt" />
+
+<!-- 	<property name="serverName" value="127.0.0.1" />
+	<property name="port" value="3306" />
+	<property name="dbName" value="logdb" />
+	<property name="user" value="root" />
+	<property name="password" value="123456" /> -->
+
+	<appender name="PROD_FILE"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logFile.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!--
+			yyyy-MM-dd_HH-mm  : 每分钟滚动一次
+			yyyy-MM-dd  : 每天滚动一次
+			%d{yyyy-MM,aux} 是按月份文件夹归档
+			-->
+			<fileNamePattern>logFile/%d{yyyy-MM,aux}/%d{yyyy-MM-dd}.log</fileNamePattern>
+<!--			<maxFileSize>5MB</maxFileSize>-->
+			<!-- keep 30 days' worth of history capped at 3GB total size -->
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>3GB</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%-12(%d{yyyy-MM-dd HH:mm:ss.SSS}) %-4relative [%thread] %-5level %logger{35} [%M] [%L] - %msg%n</pattern>
+		</encoder>
+		<!--日志文件最大的大小 -->
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>5MB</MaxFileSize>
+		</triggeringPolicy>
+	</appender>
+	<!--  <appender name="DB"
+		class="ch.qos.logback.classic.db.DBAppender">
+		<connectionSource
+			class="ch.qos.logback.core.db.DataSourceConnectionSource">
+			<dataSource
+				class="com.mysql.jdbc.jdbc2.optional.MysqlDataSource">
+				<serverName>${serverName}</serverName>
+				<port>${port}</port>
+				<databaseName>${dbName}</databaseName>
+				<user>${user}</user>
+				<password>${password}</password>
+			</dataSource>
+		</connectionSource>
+	</appender>-->
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${HPATTERN}</pattern>
+		</encoder>
+	</appender>
+	<logger name="com.zaxxer.hikari" level="ERROR" />
+	<!--省去过多日志-->
+	<logger name="org.springframework" level="ERROR" />
+	<logger name="org.springframework.web" level="ERROR" />
+	<logger name="org.springframework.boot.autoconfigure.logging" level="ERROR" />
+	<logger name="org.thymeleaf" level="ERROR" />
+	<root level="DEBUG">
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="PROD_FILE" />
+		<!-- <appender-ref ref="DB" /> -->
+	</root>
+</configuration>
+

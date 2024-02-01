@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    active: dev
+    #active: dtest
+    #active: localdev
+    #active: rele # 贵州正式部署环境
+    #active: reledb  # 使用我们自己的元数据信息
+    #active: devdb  # 使用我们自己的元数据信息
+

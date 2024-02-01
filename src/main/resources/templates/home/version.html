@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+    <title>版本信息</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <style>
+        div,h2,h3,p,ol{
+            margin:10px 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+
+    <div style="padding:10px 20px;">
+
+        <h2>版本信息</h2>
+
+        <p>
+            <ol>[2021-3-24]不再验证主键，也不打主键标签</ol>
+            <ol>[2021-3-23]同步完毕后，执行一个插入 datatable 表的数据</ol>
+            <ol>[2021-3-10]枚举值JSON验证，不清除原始编码前后空格</ol>
+            <ol>[2021-3-8]生成图谱的时候，节点上补充【全网检索】的标签</ol>
+            <ol>智能解读模块-更新新加的三个字段</ol>
+            <ol>支持按表重新同步(对新引进的系统，支持对表级别的重复导入，已经引进的系统，如果想按表级别重复融入，必须先点清空按钮，然后按新系统引入才可以)</ol>
+            <ol>数据源创建后不再删除，创建之后，一直使用此数据源</ol>
+            <ol>导航创建后不再删除，创建之后，一直使用此导航</ol>
+            <ol>导入主题词典：使用新的任务表</ol>
+            <ol>数据业务类型支持多选</ol>
+            <ol>重新同步，清除的时候，将 kbase 中的记录也清除</ol>
+            <ol>枚举值验证：库中有，JSON中没有的提示</ol>
+            <ol>验证的时候，也验证表的别名 和 列的别名 是否为中文汉字，如果不是，则提示出来。</ol>
+            <ol>修改字段指标格式的赋值，从表 ds_columnformatenum 中读取</ol>
+            <ol>同步功能：同步后，数据源(即ds_indicatorsource表)记录删除改为逻辑删除</ol>
+            <ol>同步功能：同步后，如果人工又配置了解读，重新同步后，人工配置的解读不失效，自动挂载新的数据源id下</ol>
+            <ol>同步功能：同步后，新增的数据源都默认挂载在第一个系统下面</ol>
+        </p>
+
+    </div>
+</div>
+</body>
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/iconfont.js}"></script>
+<script th:src="@{/js/vue.js}"></script>
+<script th:src="@{/js/index.js}"></script>
+
+</html>

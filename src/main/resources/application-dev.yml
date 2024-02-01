@@ -1,0 +1,128 @@
+server:
+  port: 9998
+  max-http-header-size: 4048576
+someconf:
+  #orgid: 12
+  orgid: 27
+  db:
+    ip: 59.215.224.48
+    port: 14432
+    username: mzt_lsr
+    pwd: Mztlsr123!
+  view:
+    searchsystem: v_md_instance_search_system
+    searchtable: v_md_instance_search_table
+    searchcolumn: v_md_instance_search_column
+    searchdatasource: v_md_instance_search_datasource
+    searchattr: v_md_instance_attr
+  syncKbaseOrEsSwitch: false #自动开启同步是否开启
+  todic: false #导入到词典是否开启
+  navid: 1 #［全部］导航的 id
+spring:
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+#  quartz:
+#    job-store-type: jdbc
+#    properties:
+#      org:
+#        quartz:
+#          dataSource:
+#            myDS:
+#              URL: 'jdbc:mysql://127.0.0.1:3306/tmp?useSSL=false&serverTimezone=Asia/Shanghai '
+#              driver: com.mysql.cj.jdbc.Driver
+#              maxConnections: 5
+#              password: 123456
+#              user: root
+#          jobStore:
+#            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+#            clusterCheckinInterval: 10000
+#            dataSource: myDS
+#            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+#            isClustered: false
+#            tablePrefix: QRTZ_
+#            useProperties: false
+#          scheduler:
+#            instanceId: AUTO
+#            instanceName: schedulerFactoryBean
+#          threadPool:
+#            class: org.quartz.simpl.SimpleThreadPool
+#            threadCount: 10
+#            threadPriority: 5
+  datasource:
+    mysql:
+      #JdbcUrl: jdbc:mysql://localhost:3306/bd_guojiadianwang?useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true       #url: bolt://192.168.52.64:7687
+      JdbcUrl: jdbc:mysql://192.168.52.64:3306/bd?useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+      DriverClassName: com.mysql.cj.jdbc.Driver
+      Username: root
+      Password: 123456
+    # 元数据提供数据源（表元数据，系统元数据，字段元数据）
+    psg:
+      JdbcUrl: jdbc:mysql://192.168.52.64:3306/guizhoujavablog_gjdw?useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+      DriverClassName: com.mysql.cj.jdbc.Driver
+      Username: root
+      Password: 123456
+    kbase:
+      JdbcUrl: jdbc:kbase://10.120.130.89
+      DriverClassName: com.kbase.jdbc.Driver
+      Username: DBOWN
+      Password:
+    myds:
+      JdbcUrl: jdbc:mysql://192.168.52.64:3306/guizhoujavablog_gjdw?useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+      DriverClassName: com.mysql.cj.jdbc.Driver
+      Username: root
+      Password: 123456
+    neo4j:
+      #url: bolt://10.170.128.56:7687
+      #url: bolt+routing://192.168.52.64:7687
+      url: bolt://192.168.52.64:7687
+      username: neo4j
+      password: 123456
+  redis:
+    host: 192.168.52.64
+    port: 6379
+    # Redis数据库索引（默认为0）
+    database: 0
+    # Redis服务器连接密码（默认为空）
+    password:
+    # 连接超时时间（毫秒）
+    timeout: 10000
+    # Lettuce
+    lettuce:
+      pool:
+        # 连接池最大连接数（使用负值表示没有限制）
+        max-active: 8
+        # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: 10000
+        # 连接池中的最大空闲连接
+        max-idle: 8
+        # 连接池中的最小空闲连接
+        min-idle: 0
+      # 关闭超时时间
+      shutdown-timeout: 100
+# 内存优化
+guava:
+  cache:
+    maxCacheSize: 100 #最大内存缓存个数
+    initialCapacity: 10 #内存初始化个数
+    concurrencyLevel: 5 #内存读写最大并发数
+    expireAfterWrite: 3600 #内存过期重新时间，秒
+
+
+jodconverter:
+  local:
+    enabled: true
+    office-home: C:\\Program Files\\LibreOffice\\
+    #office-home: /opt/libreoffice7.5/
+    # 任务执行的超时时间
+    taskExecutionTimeout: 86400000
+    # 任务队列的超时时间
+    taskQueueTimeout: 86400000
+    # 端口（线程）
+    portNumbers: [ 2001,2002,2003 ]
+    # 一个进程的超时时间
+    processTimeout: 86400000
+
+
+

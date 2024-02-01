@@ -1,0 +1,188 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        #app{
+            text-align: center;
+        }
+        .box{
+            display: inline-block;
+            text-align: left;
+            border: 1px solid gray;
+            width: 500px;
+            padding: 10px;
+            margin: 0 10px 10px 0;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <h2>调度任务</h2>
+
+    <div v-for="item in jobList" class="box">
+        <div style="margin-bottom:10px;font-weight: bold">任务</div>
+
+        <div>任务：{{item.title}}</div>
+        <div>任务名字：{{item.name}}</div>
+        <div>任务分组：{{item.group}}</div>
+        <div>任务类：{{item.jobClass}}</div>
+
+        <div style="margin:10px 0;font-weight: bold">任务触发器</div>
+        <div v-for="trigger in item.triggers" style="margin:0 10px 10px 0;display:inline-block;vertical-align:top">
+            <div>名字：{{trigger.name}}</div>
+            <div>分组：{{trigger.group}}</div>
+            <div style="background-color: yellow">状态：{{trigger.stateDesc}}</div>
+            <div>类型：{{trigger.type}}</div>
+            <div>下次执行时间：{{ moment(new Date(trigger.nextFireTime)).format("YYYY-MM-DD HH:mm:ss") }}</div>
+            <div v-if="trigger.type == 'cron'">Cron:{{trigger.cron}}</div>
+            <div v-if="trigger.type == 'cron'">
+                <input type="text" v-model="trigger.cron">
+                <button @click="updateTrigger(trigger)">修改Cron</button>
+            </div>
+        </div>
+
+        <div style="margin:10px 0">
+            <button @click="resumeJob(item.name,item.group)">启用</button>
+            <button @click="stopJob(item.name,item.group)">暂停</button>
+            <button @click="deleteJob(item.name,item.group)">删除</button>
+            <button @click="triggerJob(item.name,item.group)">立刻执行</button>
+            <button @click="view(item.group + '.' + item.name)">查看执行情况</button>
+        </div>
+    </div>
+
+</div>
+</body>
+
+
+<script src="https://unpkg.com/vue@2.6.11/dist/vue.min.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://js.cybozu.cn/momentjs/2.27.0/moment.min.js"></script>
+<script>
+
+    var loadData = function () {
+        $.ajax({
+            type: 'get',
+            url: '/home/triggers',
+            data: null,
+            success: function (result) {
+                app.triggerList = result;
+            },
+            error: function () {
+
+            }
+        });
+    }
+    var loadJobList = function () {
+        $.ajax({
+            type: 'get',
+            url: '/home/jobs',
+            data: null,
+            success: function (result) {
+                app.jobList = result;
+            },
+            error: function () {
+
+            }
+        });
+    }
+    var resumeJob = function (jobName,jobGroup) {
+        $.ajax({
+            type: 'get',
+            url: '/home/resumeJob',
+            data: {jobName:jobName,jobGroup:jobGroup},
+            success: function (result) {
+                console.log(result);
+                app.loadData();
+                app.loadJobList();
+            },
+            error: function () {
+
+            }
+        });
+    }
+    var stopJob = function (jobName,jobGroup) {
+        $.ajax({
+            type: 'get',
+            url: '/home/stopJob',
+            data: {jobName:jobName,jobGroup:jobGroup},
+            success: function (result) {
+                console.log(result);
+                app.loadData();
+                app.loadJobList();
+            },
+            error: function () {
+
+            }
+        });
+    }
+    var deleteJob = function (jobName,jobGroup) {
+        $.ajax({
+            type: 'get',
+            url: '/home/deleteJob',
+            data: {jobName:jobName,jobGroup:jobGroup},
+            success: function (result) {
+                console.log(result);
+                app.loadData();
+                app.loadJobList();
+            },
+            error: function () {
+
+            }
+        });
+    }
+    var triggerJob = function (jobName,jobGroup) {
+        $.ajax({
+            type: 'get',
+            url: '/home/triggerJob',
+            data: {jobName:jobName,jobGroup:jobGroup},
+            success: function (result) {
+                console.log(result);
+                app.loadData();
+                app.loadJobList();
+            },
+            error: function () {
+
+            }
+        });
+    }
+    var updateTrigger = function (trigger) {
+        $.ajax({
+            type: 'get',
+            url: '/home/updateTrigger',
+            data: {triggerName:trigger.name,triggerGroup:trigger.group,cron:trigger.cron},
+            success: function (result) {
+                console.log(result);
+                app.loadData();
+                app.loadJobList();
+            },
+            error: function () {
+
+            }
+        });
+    }
+    var view= function(item){
+        window.open("/jobDetail?jobkey=" + item)
+    }
+    var app = new Vue({
+        el: '#app',
+        data: {
+            triggerList:[],
+            jobList:[],
+        },
+        methods: {
+            loadData: loadData,
+            loadJobList: loadJobList,
+            resumeJob: resumeJob,
+            stopJob: stopJob,
+            deleteJob: deleteJob,
+            updateTrigger: updateTrigger,
+            triggerJob: triggerJob,
+            view: view,
+        }
+    });
+
+    app.loadData();
+    app.loadJobList();
+</script>
+</html>

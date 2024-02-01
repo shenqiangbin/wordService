@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+    <title>数据信息</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<div id="app">
+
+    <div style="padding:10px 20px;">
+
+        <h2>用户数据信息</h2>
+
+<!--        <div style="width:300px;margin:10px 0;">-->
+<!--            <el-input placeholder="列名称" v-model="searchName" @keyup.enter.native="loadData"></el-input>-->
+<!--        </div>-->
+
+        <!--        <div>-->
+        <!--            <span v-for="(value,key,index) in pageModel.list[0]">-->
+        <!--                {{key}}-{{value}}-->
+        <!--            </span>-->
+        <!--        </div>-->
+
+        <el-table ref="multipleTable" style="width: 100%" :data="pageModel.list" v-loading="dataloading">
+            <template v-for="(value, key, index) in pageModel.list[0]">
+                <template>
+                    <el-table-column :key="index" :prop="key" :label="key" width="180">
+                    </el-table-column>
+                </template>
+            </template>
+<!--            <el-table-column  label="操作" width="300px" fixed="right">-->
+<!--                <template slot-scope="scope" >-->
+<!--                    <a target="_blank" :href='"set/check?sysCode=" + scope.row["表编码"]' style="color:blue">查看字段信息</a>-->
+<!--                </template>-->
+<!--            </el-table-column>-->
+        </el-table>
+
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                       :page-sizes="[10,20,30,50]"
+                       :current-page="pageModel.currentPage" :page-size="pageModel.pageSize" layout="sizes,total,prev, pager, next, jumper"
+                       :total="pageModel.totalCount"></el-pagination>
+    </div>
+</div>
+</body>
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/iconfont.js}"></script>
+<script th:src="@{/js/vue.js}"></script>
+<script th:src="@{/js/index.js}"></script>
+
+<script>
+    var contextRoot = "/";
+
+    function GetQueryString(name)
+    {
+        //正则表达式过滤
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        //substr（1）：从字符串第一个位置中提取一些字符
+        //match（）：在字符串内检索与正则表达式匹配的指定值，返回一个数组给r
+        var r = window.location.search.substr(1).match(reg);
+        //获取r数组中下标为2的值；（下标从0开始），用decodeURI（）进行解码
+        if (r != null) return decodeURI(r[2]); return null;
+    }
+
+
+    var loadData = function () {
+        var sysCode = GetQueryString("sysCode");
+        var tablename = GetQueryString("tablename");
+        var tableCode = GetQueryString("tableCode");
+        var esIndex = GetQueryString("esIndex");
+        var _this = this
+        _this.dataloading = true;
+        $.ajax({
+            type: "get",
+            url: contextRoot + "table/getdata",
+            data: {sysCode: sysCode, tablename:tablename, tableCode:tableCode, currentPage: app.currentPage, pageSize: app.pageSize, name: app.searchName, esIndex: esIndex},
+            async: true,
+            success: function (result) {
+                console.log(result);
+                if (result.code == 200) {
+                    app.pageModel = result.data;
+                }else {
+                    alert(result.msg);
+                }
+                _this.dataloading = false;
+            },
+            error: function () {
+                alert("信息获取失败");
+            }
+        });
+    };
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            searchName:'',
+            currentPage:1,
+            pageSize:10,
+            pageModel:[],
+            name: 'test',
+            dataloading: false,
+        },
+        methods: {
+            loadData: loadData,
+            handleSizeChange(val) {
+                app.currentPage = 1;
+                app.pageSize = val;
+                app.loadData();
+            },
+            handleCurrentChange(val){
+                app.currentPage = val;
+                app.loadData();
+            },
+        }
+    })
+
+    app.loadData();
+</script>
+
+</html>

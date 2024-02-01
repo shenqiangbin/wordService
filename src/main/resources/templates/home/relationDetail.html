@@ -1,0 +1,126 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+<!--    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">-->
+</head>
+<body>
+<div id="app">
+    <!--<input id="text" type="text" /><button onclick="send()">Send</button>-->
+    <!--<button onclick="closeWebSocket()">Close</button>-->
+    <div style="display: none"><input type="checkbox" checked="checked" id="alwaysFllow" style="display: none">始终查看最新消息</input></div>
+    <div id="message" style="width:90%;position: absolute;top:10px; bottom:10px; scroll:auto;border:1px solid darkgray;padding: 5px 10px;overflow: auto">
+    </div>
+</div>
+</body>
+
+
+<!--<script src="https://unpkg.com/vue@2.6.11/dist/vue.min.js"></script>-->
+<!--<script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
+<!--<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+<script th:src="@{/js/jquery.min.js}"></script>
+<script>
+    var contextRoot = "[[@{/}]]";
+
+    function GetQueryString(name) {
+        //正则表达式过滤
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        //substr（1）：从字符串第一个位置中提取一些字符
+        //match（）：在字符串内检索与正则表达式匹配的指定值，返回一个数组给r
+        var r = window.location.search.substr(1).match(reg);
+        //获取r数组中下标为2的值；（下标从0开始），用decodeURI（）进行解码
+        if (r != null) return decodeURI(r[2]);
+        return null;
+    }
+
+    var sysCode = GetQueryString("sysCode");
+
+    var key = sysCode;
+
+    var websocket = null;
+
+    //判断当前浏览器是否支持WebSocket
+    if ('WebSocket' in window) {
+        websocket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port + contextRoot + "websocket/" + key);
+    } else {
+        alert('不支持 websocket')
+    }
+
+    //连接发生错误的回调方法
+    websocket.onerror = function () {
+        setMessageInnerHTML("error");
+    };
+
+    //连接成功建立的回调方法
+    websocket.onopen = function (event) {
+        setMessageInnerHTML("通信连接成功");
+        var r=confirm("确认同步吗");
+        if (r==true) {
+            setMessageInnerHTML("操作确认");
+            // 连接成功后，再触发同步
+            $.get("/tableRelation/go?sysCode=" + sysCode,function(data){console.log(data)});
+        }else{
+            setMessageInnerHTML("已取消操作");
+        }
+    }
+
+    //接收到消息的回调方法
+    websocket.onmessage = function (event) {
+        setMessageInnerHTML(event.data);
+    }
+
+    //连接关闭的回调方法
+    websocket.onclose = function () {
+        setMessageInnerHTML("连接关闭");
+    }
+
+    //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+    window.onbeforeunload = function () {
+        websocket.close();
+    }
+
+    //将消息显示在网页上
+    function setMessageInnerHTML(innerHTML) {
+        var msgEle = document.getElementById('message');
+        msgEle.innerHTML += warpMsg(innerHTML);
+
+        if($('#alwaysFllow').prop('checked')){
+            msgEle.scrollTop = msgEle.scrollHeight;
+        }
+    }
+
+    function warpMsg(innerHTML) {
+        if (innerHTML.startsWith('[')) {
+            var color = getBgColorForThread(innerHTML)
+            return '<div style="background-color: gray;color:white">'.replace('gray', color) + innerHTML + '</div>'
+        } else {
+            return '<div>'+ innerHTML + '</div>'
+        }
+    }
+
+    var threadArr = [];
+
+    function getBgColorForThread(msg) {
+        var colorArr = ["#76a6f1", "#4cc4cb", "#7474fa", "#cac2ef",
+            "#948da0", "#cc97b2", "#92466d", '#ff8080',
+            "#cfda2f", "#49da2f"
+        ]
+        var tthread = msg.substr(0, msg.indexOf(']') + 1)
+        if (threadArr.indexOf(tthread) < 0) {
+            threadArr.push(tthread)
+        }
+        return colorArr[threadArr.indexOf(tthread) % 11]
+    }
+
+    //关闭连接
+    function closeWebSocket() {
+        websocket.close();
+    }
+
+    //发送消息
+    function send() {
+        var message = document.getElementById('text').value;
+        websocket.send(message);
+    }
+
+</script>
+</html>
